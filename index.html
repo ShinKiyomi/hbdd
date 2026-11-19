@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hello from space</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#0b0620;--bg2:#2a1260;--ink:#f6edff;--mint:#8dffc0;--pink:#ff9ecb;--gold:#ffd36e;--sw:min(50vw,42vh,250px)}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#02010a;color:var(--ink);font-family:'Fredoka',system-ui,sans-serif;overflow:hidden}
+#intro{position:fixed;inset:0;background:#02010a;transition:opacity .9s,transform .9s;overflow:hidden}
+#intro::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,var(--bg2),var(--bg1) 72%);opacity:0;transition:opacity 5s}
+#intro.sky::before{opacity:.85}
+#intro.gone{opacity:0;transform:scale(1.15);pointer-events:none}
+#bg{position:absolute;inset:0;width:100%;height:100%;z-index:1}
+#shipPar{position:absolute;top:4vh;left:0;right:0;display:flex;justify-content:center;z-index:3;pointer-events:none}
+#ship{width:var(--sw);opacity:0;transform:translate(28vw,-34vh) rotate(14deg) scale(.35);transition:transform 3.4s cubic-bezier(.16,.8,.25,1),opacity 1.6s}
+#ship.in{opacity:1;transform:none}
+#ship svg{display:block;width:100%;animation:bob2 3.6s ease-in-out infinite;filter:drop-shadow(0 0 22px rgba(170,150,255,.65))}
+@keyframes bob2{50%{transform:translateY(-8px) rotate(-1.5deg)}}
+#lights circle{transition:fill .3s}
+#beam{position:absolute;left:50%;top:calc(4vh + var(--sw)*.36);bottom:29vh;width:min(76vw,340px);transform:translateX(-50%) scaleY(0);transform-origin:top;z-index:2;pointer-events:none;opacity:0;
+  clip-path:polygon(41% 0,59% 0,100% 100%,0 100%);background:linear-gradient(to bottom,rgba(255,246,184,.85),rgba(160,255,225,.3) 60%,rgba(160,255,225,.06));transition:transform 1s ease-out,opacity .9s}
+#beam.on{opacity:1;transform:translateX(-50%) scaleY(1)}
+#beam.dim{opacity:0}
+#beam::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.2) 0 10px,transparent 10px 28px);animation:scan 1.2s linear infinite}
+@keyframes scan{to{background-position:0 28px}}
+#slot{position:absolute;left:50%;top:33vh;width:min(40vw,29vh,220px);transform:translateX(-50%);z-index:4}
+#drop{opacity:0;transform-origin:50% 100%}
+#drop.fall{animation:fall 1.9s forwards}
+@keyframes fall{0%{opacity:0;transform:translateY(-48vh) rotate(-260deg);animation-timing-function:cubic-bezier(.5,0,.9,.7)}
+ 10%{opacity:1}55%{transform:translateY(0) rotate(14deg) scale(1.12,.86);animation-timing-function:ease-out}
+ 70%{transform:translateY(-8vh) rotate(55deg);animation-timing-function:ease-in}85%{transform:translateY(0) rotate(90deg) scale(1.14,.86)}100%{opacity:1;transform:rotate(90deg)}}
+#drop.up{animation:getup 1.1s ease-out forwards}
+@keyframes getup{0%{opacity:1;transform:rotate(90deg)}35%{opacity:1;transform:rotate(60deg) scale(1,.95)}65%{opacity:1;transform:rotate(-10deg) translateY(-14px)}85%{opacity:1;transform:rotate(4deg)}100%{opacity:1;transform:none}}
+#awrap{position:relative;width:100%;transform-origin:50% 100%;transform:scale(calc(.75 + var(--p,0)*.25));transition:transform .25s ease-out;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#alien{width:100%;display:block;overflow:visible;filter:drop-shadow(0 0 18px rgba(141,255,192,.45))}
+#alien.float{animation:float 3.2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-12px) rotate(2deg)}}
+#alien.squish{animation:squish .5s}
+@keyframes squish{30%{transform:scale(1.15,.82)}60%{transform:scale(.92,1.1)}100%{transform:none}}
+#alien.happy{animation:jump .7s ease-out 2,float 3.2s 1.4s ease-in-out infinite}
+@keyframes jump{40%{transform:translateY(-34px) scale(.95,1.06)}70%{transform:translateY(0) scale(1.08,.92)}}
+.blink{animation:blink 4.2s infinite}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.ant{animation:wig 2.4s ease-in-out infinite}.ant.r{animation-delay:-1.2s}
+@keyframes wig{50%{transform:rotate(9deg)}}
+.arm-r{transform-origin:138px 190px}
+#alien.happy .arm-r{animation:wave .45s ease-in-out infinite alternate}
+@keyframes wave{to{transform:rotate(-55deg)}}
+#bubble{position:absolute;top:-6%;right:-26%;background:#fff;color:#3a1c6b;font-weight:600;font-size:14px;padding:6px 12px;border-radius:14px 14px 14px 2px;opacity:0;transform:scale(.5);transition:.25s;pointer-events:none;white-space:nowrap}
+#bubble.show{opacity:1;transform:scale(1)}
+#ui{position:absolute;left:0;right:0;top:73vh;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:4;opacity:0;transition:opacity 1s;text-align:center;padding:0 16px}
+#ui.show{opacity:1}
+h1{margin:0;font-size:clamp(17px,4.4vw,24px);font-weight:500;min-height:1.5em}
+.bar{width:min(78vw,340px);height:16px;border-radius:99px;background:rgba(255,255,255,.1);padding:3px;border:1px solid rgba(255,255,255,.18)}
+#fill{display:block;height:100%;width:0;border-radius:99px;position:relative;overflow:hidden;background:linear-gradient(90deg,var(--mint),var(--pink),var(--gold));box-shadow:0 0 14px rgba(255,158,203,.7)}
+#fill::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.6) 50%,transparent 70%);animation:shine 1.3s linear infinite}
+@keyframes shine{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+#pct{font-size:14px;opacity:.75;font-variant-numeric:tabular-nums}
+.btn{font:600 18px 'Fredoka',system-ui,sans-serif;color:#2a1740;background:linear-gradient(135deg,var(--mint),var(--gold));border:0;border-radius:99px;padding:13px 34px;cursor:pointer;box-shadow:0 0 28px rgba(141,255,192,.55);opacity:0;transform:translateY(10px) scale(.9);pointer-events:none;transition:.5s}
+.btn.show{opacity:1;transform:none;pointer-events:auto;animation:bob 1.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px)}}
+.heart{position:fixed;z-index:5;pointer-events:none;color:var(--pink);font-size:20px;animation:up 1.4s ease-out forwards}
+@keyframes up{to{transform:translate(var(--dx),-120px) scale(1.4);opacity:0}}
+#home{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,var(--bg2),var(--bg1) 70%)}
+#home h2{margin:0;font-size:clamp(24px,6vw,42px);color:var(--gold)}
+@media (prefers-reduced-motion:reduce){#ship,#beam,#intro::before{transition-duration:.01ms}}
+</style>
+</head>
+<body>
+<div id="intro">
+  <canvas id="bg"></canvas>
+  <div id="beam"></div>
+  <div id="shipPar"><div id="ship">
+    <svg viewBox="0 0 240 110" aria-label="A little spaceship">
+      <defs><linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4ecff"/><stop offset="1" stop-color="#8b78c9"/></linearGradient>
+      <radialGradient id="dome" cx="40%" cy="30%" r="70%"><stop offset="0" stop-color="#e6fffb" stop-opacity=".95"/><stop offset="1" stop-color="#7fe0ff" stop-opacity=".55"/></radialGradient></defs>
+      <path d="M72 54Q120 -12 168 54Z" fill="url(#dome)" stroke="#d8f6ff" stroke-width="2"/>
+      <ellipse cx="120" cy="64" rx="108" ry="26" fill="url(#hull)"/>
+      <ellipse cx="120" cy="88" rx="30" ry="8" fill="#fff6b8"/>
+      <g id="lights"></g>
+    </svg></div></div>
+  <div id="slot"><div id="drop"><div id="awrap">
+    <div id="bubble">hehe!</div>
+    <svg id="alien" viewBox="0 0 200 250" aria-label="A cute alien">
+      <defs><radialGradient id="skin" cx="50%" cy="35%" r="70%"><stop offset="0" stop-color="#d6ffe6"/><stop offset=".55" stop-color="#8dffc0"/><stop offset="1" stop-color="#4fd69a"/></radialGradient>
+      <radialGradient id="ball" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ff9ecb"/></radialGradient></defs>
+      <ellipse cx="100" cy="206" rx="30" ry="32" fill="url(#skin)"/><ellipse cx="100" cy="212" rx="17" ry="20" fill="#b9ffd9" opacity=".6"/>
+      <ellipse cx="86" cy="238" rx="12" ry="7" fill="#4fd69a"/><ellipse cx="114" cy="238" rx="12" ry="7" fill="#4fd69a"/>
+      <path d="M72 192Q56 206 60 220" stroke="#6fe8b0" stroke-width="9" stroke-linecap="round" fill="none"/>
+      <g class="arm-r"><path d="M128 192Q146 190 150 172" stroke="#6fe8b0" stroke-width="9" stroke-linecap="round" fill="none"/><circle cx="150" cy="170" r="6" fill="#8dffc0"/></g>
+      <g class="ant" style="transform-origin:78px 46px"><path d="M78 46Q58 30 54 12" stroke="#6fe8b0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="54" cy="11" r="8" fill="url(#ball)"/></g>
+      <g class="ant r" style="transform-origin:122px 46px"><path d="M122 46Q142 30 146 12" stroke="#6fe8b0" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="146" cy="11" r="8" fill="url(#ball)"/></g>
+      <path d="M100 34C162 34 188 80 172 122C161 156 126 176 100 176C74 176 39 156 28 122C12 80 38 34 100 34Z" fill="url(#skin)"/>
+      <path d="M58 62Q80 44 108 46" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".55"/>
+      <g id="eyes">
+        <g class="blink" style="transform-origin:66px 106px"><ellipse cx="66" cy="106" rx="22" ry="30" transform="rotate(24 66 106)" fill="#1a0b33"/><g class="hl"><circle cx="60" cy="96" r="8" fill="#fff"/><circle cx="73" cy="116" r="3.6" fill="#fff"/></g></g>
+        <g class="blink" style="transform-origin:134px 106px"><ellipse cx="134" cy="106" rx="22" ry="30" transform="rotate(-24 134 106)" fill="#1a0b33"/><g class="hl"><circle cx="128" cy="96" r="8" fill="#fff"/><circle cx="141" cy="116" r="3.6" fill="#fff"/></g></g>
+      </g>
+      <ellipse cx="44" cy="136" rx="11" ry="6.5" fill="#ff9ecb" opacity=".75"/><ellipse cx="156" cy="136" rx="11" ry="6.5" fill="#ff9ecb" opacity=".75"/>
+      <path id="mouth" d="M88 140Q100 154 112 140" stroke="#1a0b33" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="94" cy="124" r="1.6" fill="#2d8a64"/><circle cx="106" cy="124" r="1.6" fill="#2d8a64"/>
+    </svg></div></div></div>
+  <div id="ui">
+    <div class="bar"><i id="fill"></i></div><div id="pct">0%</div>
+    <button class="btn" id="enter">Come with me ✨</button>
+  </div>
+</div>
+
+<!-- NEXT SECTION: BUILD HERE. Shows after she presses "Come with me". Replace everything inside #home. -->
+<main id="home">
+  <h2>The next part goes here 💫</h2>
+  <p>Tell me what you want next and I will build it in this space.</p>
+  <button class="btn show" onclick="location.reload()">Replay intro</button>
+</main>
+
+<script>
+const $=id=>document.getElementById(id),intro=$('intro'),cv=$('bg'),c=cv.getContext('2d');
+const ph={stars:-1,gal:-1};let w,h,d,mx=.5,my=.5,moved=false,sm={x:.5,y:.5},lx=0,ly=0,gals=[],P=[];
+const HUES=[150,330,45,200,280];
+
+/* ---------- galaxies (pre-rendered once, spun every frame) ---------- */
+function makeGal(R,hu){const o=document.createElement('canvas');o.width=o.height=R*2;const g=o.getContext('2d');g.translate(R,R);g.globalCompositeOperation='lighter';
+  let q=g.createRadialGradient(0,0,0,0,0,R*.55);q.addColorStop(0,`hsla(${hu+30},100%,94%,.95)`);q.addColorStop(.25,`hsla(${hu+20},100%,70%,.45)`);q.addColorStop(1,`hsla(${hu},100%,50%,0)`);g.fillStyle=q;g.fillRect(-R,-R,2*R,2*R);
+  const pt=(i,j)=>{const r=Math.pow(Math.random(),.7)*R*.95,k=r/R,a=Math.log(1+k*6)*2.6+(i%2)*Math.PI+(Math.random()-.5)*(.5+k*.4);return[Math.cos(a)*r,Math.sin(a)*r,k];};
+  for(let i=0;i<40;i++){const[x,y,k]=pt(i);q=g.createRadialGradient(x,y,0,x,y,R*.16);q.addColorStop(0,`hsla(${hu+k*80},90%,60%,.16)`);q.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=q;g.fillRect(x-R*.16,y-R*.16,R*.32,R*.32);}
+  for(let i=0;i<2200;i++){const[x,y,k]=pt(i),s=Math.random()*1.8+.4;g.fillStyle=`hsla(${hu+k*70},90%,${88-k*35}%,${.8-k*.45})`;g.fillRect(x,y,s,s);}
+  return o;}
+const stars=Array.from({length:210},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.5+.3,p:Math.random()*6.3,s:.6+Math.random()*2.4,z:Math.random(),d:Math.random()*1.6,c:['#fff','#fff','#dff6ff','#ffe3f1','#fff3c4'][Math.floor(Math.random()*5)]}));
+function size(){d=devicePixelRatio||1;w=innerWidth;h=innerHeight;cv.width=w*d;cv.height=h*d;const m=Math.min(w,h)*1.05;
+  gals=[{o:makeGal(m*.34,320),x:.2,y:.27,t:-.4,sp:.05,z:.5},{o:makeGal(m*.27,195),x:.82,y:.22,t:.5,sp:-.07,z:.8},{o:makeGal(m*.21,40),x:.76,y:.8,t:-.2,sp:.09,z:1}];}
+addEventListener('resize',size);size();
+function spark(x,y,r){c.beginPath();c.moveTo(x,y-r);c.quadraticCurveTo(x,y,x+r,y);c.quadraticCurveTo(x,y,x,y+r);c.quadraticCurveTo(x,y,x-r,y);c.quadraticCurveTo(x,y,x,y-r);c.fill();}
+function neb(x,y,r,hu,a){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`hsla(${hu},90%,60%,${a})`);g.addColorStop(1,`hsla(${hu},90%,60%,0)`);c.fillStyle=g;c.fillRect(x-r,y-r,2*r,2*r);}
+
+/* ---------- particles (cursor + bursts) ---------- */
+function add(x,y,vx,vy,l){if(P.length>280)P.shift();P.push({x,y,vx,vy,l,m:l,r:3+Math.random()*7,h:HUES[Math.floor(Math.random()*5)],rot:Math.random()*6,vr:(Math.random()-.5)*6,dot:Math.random()<.35});}
+function burst(x,y,n){for(let i=0;i<n;i++){const a=Math.random()*6.28,v=50+Math.random()*190;add(x,y,Math.cos(a)*v,Math.sin(a)*v-40,.9+Math.random()*.9);}}
+addEventListener('pointermove',e=>{mx=e.clientX/w;my=e.clientY/h;moved=true;
+  const dist=Math.hypot(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;
+  for(let i=0,n=Math.min(5,1+Math.floor(dist/10));i<n;i++){const a=Math.random()*6.28,v=15+Math.random()*60;add(e.clientX+(Math.random()-.5)*10,e.clientY+(Math.random()-.5)*10,Math.cos(a)*v,Math.sin(a)*v+10,.8+Math.random()*.9);}
+  const dx=(mx-.5)*2,dy=(my-.5)*2;document.querySelectorAll('.hl').forEach(g=>g.style.transform=`translate(${dx*5}px,${dy*5}px)`);$('eyes').style.transform=`translate(${dx*3}px,${dy*2}px)`;});
+addEventListener('pointerdown',e=>burst(e.clientX,e.clientY,16));
+document.querySelectorAll('.hl').forEach(g=>g.style.transition='transform .12s');$('eyes').style.transition='transform .15s';
+
+/* ---------- draw loop ---------- */
+let last=0;
+function draw(now){const t=now/1000,dt=Math.min(.05,(now-last)/1000);last=now;
+  sm.x+=(mx-sm.x)*.07;sm.y+=(my-sm.y)*.07;const px=sm.x-.5,py=sm.y-.5;
+  c.setTransform(d,0,0,d,0,0);c.globalCompositeOperation='source-over';c.globalAlpha=1;c.clearRect(0,0,w,h);c.globalCompositeOperation='lighter';
+  const ga=ph.gal<0?0:Math.min(1,(t-ph.gal)/4);
+  if(ga>0){c.globalAlpha=ga;neb(w*.3-px*40,h*.3,w*.45,300,.16);neb(w*.78-px*60,h*.55,w*.4,200,.13);neb(w*.5,h*.85,w*.5,260,.12);
+    for(const g of gals){c.save();c.globalAlpha=ga;c.translate(g.x*w-px*70*g.z,g.y*h-py*70*g.z);c.rotate(g.t);const s=.6+.4*ga;c.scale(s,s*.5);c.rotate(t*g.sp);c.drawImage(g.o,-g.o.width/2,-g.o.height/2);c.restore();}}
+  if(ph.stars>=0){const sa=t-ph.stars;for(const s of stars){const ap=Math.min(1,Math.max(0,(sa-s.d)/.5));if(!ap)continue;const tw=.4+.6*Math.abs(Math.sin(t*s.s+s.p));
+    const x=s.x*w-px*34*s.z,y=s.y*h-py*34*s.z,r=s.r*(1+(1-ap)*3);c.fillStyle=s.c;c.globalAlpha=ap*tw;c.beginPath();c.arc(x,y,r,0,7);c.fill();if(s.r>1.3){c.globalAlpha=ap*tw*.85;spark(x,y,r*4.5*tw);}}}
+  if(moved){const g=c.createRadialGradient(sm.x*w,sm.y*h,0,sm.x*w,sm.y*h,110);g.addColorStop(0,'rgba(255,190,255,.16)');g.addColorStop(1,'rgba(255,190,255,0)');c.globalAlpha=1;c.fillStyle=g;c.fillRect(sm.x*w-110,sm.y*h-110,220,220);}
+  for(const p of P){p.l-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=25*dt;p.vx*=.985;p.rot+=p.vr*dt;const a=Math.max(0,p.l/p.m);c.globalAlpha=a;c.fillStyle=`hsl(${p.h},100%,78%)`;
+    if(p.dot){c.beginPath();c.arc(p.x,p.y,p.r*.3*a+.6,0,7);c.fill();}else{c.save();c.translate(p.x,p.y);c.rotate(p.rot);spark(0,0,p.r*(.4+a));c.restore();}}
+  P=P.filter(p=>p.l>0);
+  $('shipPar').style.transform=`translate(${px*22}px,${py*10}px)`;
+  requestAnimationFrame(draw);}
+requestAnimationFrame(draw);
+
+/* ---------- ship lights ---------- */
+const LG=$('lights');for(let i=0;i<7;i++){const x=34+i*28.7,y=64+Math.sqrt(1-((x-120)/108)**2)*13;LG.insertAdjacentHTML('beforeend',`<circle cx="${x}" cy="${y}" r="4.5" fill="#5b4a8a"/>`);}
+const lights=n=>[...LG.children].forEach((e,i)=>e.setAttribute('fill',i<n?'#ffe9a8':'#5b4a8a'));
+
+/* ---------- the opening sequence ---------- */
+const now=()=>performance.now()/1000,at=(ms,f)=>setTimeout(f,ms);
+const drop=$('drop'),alien=$('alien'),mouth=$('mouth'),SMILE='M88 140Q100 154 112 140';
+const feet=()=>{const r=$('slot').getBoundingClientRect();return[r.left+r.width/2,r.bottom];};
+at(900,()=>ph.stars=now());                       // 1. sudden stars
+at(3000,()=>{ph.gal=now();intro.classList.add('sky');});   // 2. galaxies
+at(6000,()=>$('ship').classList.add('in'));        // 3. spaceship glides in
+at(9300,()=>{$('beam').classList.add('on');lights(7);});   // 4. light beam
+at(10100,()=>drop.classList.add('fall'));          // 5. alien falls
+at(11150,()=>{mouth.setAttribute('d','M90 146Q100 136 110 146');burst(...feet(),22);});
+at(11700,()=>burst(...feet(),10));
+at(12200,()=>{drop.classList.remove('fall');drop.classList.add('up');});  // 6. gets up
+at(13300,()=>{mouth.setAttribute('d',SMILE);alien.classList.add('float');$('beam').classList.add('dim');lights(0);$('ui').classList.add('show');startLoad();});  // 7. loading
+
+/* ---------- loading ---------- */
+const fill=$('fill'),pct=$('pct'),enter=$('enter');
+const lines=[[0,"Contacting the mothership…"],[18,"Teaching the alien to smile…"],[40,"Polishing the stars ✨"],[62,"Hiding a tiny surprise…"],[84,"Almost there, don’t blink!"]];
+function startLoad(){let p=0;const tm=setInterval(()=>{p=Math.min(100,p+Math.random()*1.8+.5);const v=Math.floor(p);
+  fill.style.width=v+'%';pct.textContent=v+'%';intro.style.setProperty('--p',p/100);lights(Math.floor(p/100*7.01));
+  if(p>=100){clearInterval(tm);finish();}},70);}
+function finish(){alien.classList.add('happy');mouth.setAttribute('d','M84 138Q100 162 116 138');
+  hearts(innerWidth/2,innerHeight*.5,12);burst(innerWidth/2,innerHeight*.3,30);enter.classList.add('show');}
+
+/* ---------- play with the alien ---------- */
+const sayings=["hehe!","boop!","that tickles","take me to your leader","hi hi hi!","you’re cute"],bubble=$('bubble');
+function hearts(x,y,n){for(let i=0;i<n;i++){const e=document.createElement('span');e.className='heart';e.textContent=i%3?'♥':'✦';
+  e.style.left=x+(Math.random()-.5)*80+'px';e.style.top=y+'px';e.style.setProperty('--dx',(Math.random()-.5)*120+'px');e.style.animationDelay=Math.random()*.25+'s';
+  document.body.appendChild(e);setTimeout(()=>e.remove(),1800);}}
+$('awrap').addEventListener('pointerdown',e=>{if(!alien.classList.contains('float')&&!alien.classList.contains('happy'))return;
+  alien.classList.remove('squish');void alien.getBoundingClientRect();alien.classList.add('squish');
+  bubble.textContent=sayings[Math.floor(Math.random()*sayings.length)];bubble.classList.add('show');clearTimeout(bubble.t);bubble.t=setTimeout(()=>bubble.classList.remove('show'),1400);hearts(e.clientX,e.clientY,6);});
+
+enter.onclick=()=>{intro.classList.add('gone');setTimeout(()=>{intro.style.display='none';$('home').style.display='flex';},800);};
+</script>
+</body>
+</html>
